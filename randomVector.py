@@ -3,13 +3,13 @@ import numpy as np
 
 
 
-def Vect3D():
-    x = -1 + 2 * random.random()
-    y = -1 + 2 * random.random()
-    z = -1 + 2 * random.random()
-    return np.array([x * random.random(), y * random.random(), z * random.random()])
+def Vect3D(Rad):
+    x = -Rad + 2 * Rad * random.random()
+    y = -Rad + 2 * Rad * random.random()
+    z = -Rad + 2 * Rad * random.random()
+    return np.array([x, y , z])
 
-def Vect2D():
-    x = -1 + 2 * random.random()
-    y = -1 + 2 * random.random()
-    return np.array([x * random.random(), y * random.random()])
+def Vect2D(Rad):
+    x = -Rad + 2 * Rad * random.random()
+    y = -Rad + 2 * Rad * random.random()
+    return np.array([x, y])
