@@ -2,7 +2,7 @@ import randomVector
 import matplotlib.pyplot as plt
 
 #  Definim el nombre d'events
-Nevents = 1000
+Nevents = 100
 Rad = 1
 #  Creem els events
 def generateEvents(Nev):
