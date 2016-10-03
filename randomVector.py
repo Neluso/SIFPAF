@@ -1,15 +1,11 @@
-import random
 import numpy as np
+import random
+import math
 
 
-def Vect2D(Rad):
-    x = -Rad + 2 * Rad * random.random()
-    y = -Rad + 2 * Rad * random.random()
+def Vect2D(Energy):
+    Rad = np.random.normal(Energy,0.1)
+    theta = -math.pi/2 + math.pi * random.random()
+    x = Rad * math.cos(theta)
+    y = Rad * math.sin(theta)
     return np.array([x, y])
-
-
-def Vect3D(Rad):
-    x = -Rad + 2 * Rad * random.random()
-    y = -Rad + 2 * Rad * random.random()
-    z = -Rad + 2 * Rad * random.random()
-    return np.array([x, y , z])
