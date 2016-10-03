@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 #  Defining Beam
 while True:
-    break
     try:
         Intensity = float(input("Intensitat del feix (partícules/s) = "))
         Energy = int(input("Energia del feix (Mev) = "))
@@ -13,18 +12,19 @@ while True:
         input("Ha ocorregut un error, polse una tecla per continuar.")
         continue
 
-Nevents = 100  #  -> Intensity
-Rad = 10.  # -> Energy
+Nevents = 1000  #  -> Intensity
 
 
 #  Create events
-def generateEvents(Nev):
+def generateEvents(Nev, Ener):
     for i in range(Nev):
-        vect = randomVector.Vect2D(Rad)
-        plt.arrow(0, 0, vect[0], vect[1],length_includes_head=True,width=0.001*Rad)
-        axes = plt.gca()
-        axes.set_xlim([0,Rad])
-        axes.set_ylim([-Rad,Rad])
+        vect = randomVector.Vect2D(Ener)
+        plt.arrow(0, 0, vect[0], vect[1],length_includes_head=True,width=0.0008*Ener)
 
-generateEvents(Nevents)
+
+generateEvents(Nevents,Energy)
+
+axes = plt.gca()
+axes.set_xlim([0,Energy])
+axes.set_ylim([-Energy,Energy])
 plt.show()
