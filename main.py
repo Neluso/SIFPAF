@@ -5,34 +5,57 @@ import numpy as np
 import math
 import random
 
-
 #  Defining Utils for execution
 def Vect2D(Energy):
     Rad = np.random.normal(Energy,0.1)
     theta = -math.pi/2 + math.pi * random.random()
     x = Rad * math.cos(theta)
     y = Rad * math.sin(theta)
-    return np.array([x, y])
+    return np.array([[x, y]])
 
 
-def generateEvents(Nev, Ener):
-    vectAux = np.array([0,0])
-    for i in range(Nev):
-        vect = Vect2D(Ener)
-        plt.arrow(vectAux[0], vectAux[1], vect[0], vect[1],length_includes_head=True,width=0.0008*Ener)
-        vectAux = vect
+def generateEvents(Ener):
+    vect = np.ones((0,2))
+    dEner = 0.5*random.random()*Ener #  that will be a function which will return the energy loss computed with an interaction probability
+    while Ener > 0:
+        vect=np.append(vect,Vect2D(Ener),axis=0)
+        Ener = Ener - dEner
+    return vect
+
+
+def setTrajectory(vect):
+    nEv = vect.shape[0]
+    traject = np.zeros((nEv+1,2))
+    for i in range(nEv+1):
+        element = [np.sum(vect[0:i,0]),np.sum(vect[0:i,1])]
+        traject[i,:] = element
+    return traject
+
+
+def drawTrajectory(traject):
+    nEv = traject.shape[0]
+    for i in range(nEv):
+        plt.plot(traject[0:i,0], traject[0:i,1],'-b')
+
+
+def particle(Energy):
+    events = generateEvents(Energy)
+    tr = setTrajectory(events)
+    drawTrajectory(tr)
 
 
 #  Defining Beam
-while True:
-    break #  for the moment this remains inactive
-    try:
-        Intensity = float(input("Intensitat del feix (partícules/s) = "))
-        Energy = int(input("Energia del feix (Mev) = "))
-        break
-    except:
-        input("Ha ocorregut un error, polse una tecla per continuar.")
-        continue
+def readBeam():
+    while True:
+        try:
+            Intensity = float(input("Intensitat del feix (partícules/s) = "))
+            Energy = int(input("Energia del feix (Mev) = "))
+            break
+        except:
+            input("Ha ocorregut un error, polse una tecla per continuar.")
+            continue
+    return Intensity, Energy
+
 
 Nevents = 10  #  -> Intensity
 Energy = 1.   # This would be removed
@@ -40,9 +63,13 @@ Energy = 1.   # This would be removed
 #  Create events
 
 
-generateEvents(Nevents,Energy)
 
 axes = plt.gca()
-axes.set_xlim([0,Energy])
-axes.set_ylim([-Energy,Energy])
+axes.set_xlim([0,Nevents*Energy])
+axes.set_ylim([-Nevents*Energy,Nevents*Energy])
+
+for i in range(Nevents):
+    particle(np.random.normal(100,1))
+
 plt.show()
+
