@@ -7,8 +7,8 @@ import random
 
 #  Defining Utils for execution
 def Vect2D(Energy):
-    Rad = np.random.normal(Energy,0.1)
-    theta = -math.pi/2 + math.pi * random.random()
+    Rad = np.random.normal(Energy,0.1*Energy)
+    theta = np.random.normal(0,0.1)
     x = Rad * math.cos(theta)
     y = Rad * math.sin(theta)
     return np.array([[x, y]])
@@ -16,7 +16,7 @@ def Vect2D(Energy):
 
 def generateEvents(Ener):
     vect = np.ones((0,2))
-    dEner = 0.5*random.random()*Ener #  that will be a function which will return the energy loss computed with an interaction probability
+    dEner = 0.1*Ener #  that will be a function which will return the energy loss computed with an interaction probability
     while Ener > 0:
         vect=np.append(vect,Vect2D(Ener),axis=0)
         Ener = Ener - dEner
@@ -57,19 +57,18 @@ def readBeam():
     return Intensity, Energy
 
 
-Nevents = 10  #  -> Intensity
-Energy = 1.   # This would be removed
+Nevents = 1  #  -> Intensity
+Energy = 1000.   # This would be removed
 
 #  Create events
 
 
 
 axes = plt.gca()
-axes.set_xlim([0,Nevents*Energy])
-axes.set_ylim([-Nevents*Energy,Nevents*Energy])
+axes.axis('auto')
 
 for i in range(Nevents):
-    particle(np.random.normal(100,1))
+    particle(np.random.normal(Energy,1))
 
 plt.show()
 
