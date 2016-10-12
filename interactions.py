@@ -1,4 +1,4 @@
-import particles
+import particle
 import numpy as np
 
 
