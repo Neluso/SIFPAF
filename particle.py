@@ -46,7 +46,7 @@ class Positron:
         self.position =  v * dt
 
 
-class Foton:
+class Photon:
     type = 'photon'
     mass = 0
     position = array([0, 0, 0])

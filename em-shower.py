@@ -1,22 +1,27 @@
 from numpy import *
-from particle import Electron, Foton, Positron
+from particle import Electron, Photon, Positron
 
 
-e0 = 10  # MeV
+e0 = 1000  # MeV
 
 
-particles = [Electron(e0)]
-stage = 0
+def stage(parts, e_n):
+    stage_particles = list()
+    for part in parts:
+        if part.type is 'electron':
+            stage_particles.append(Electron(e_n))
+            stage_particles.append(Photon(e_n))
+        elif part.type is 'positron':
+            stage_particles.append(Photon(e_n))
+            stage_particles.append(Photon(e_n))
+        elif part.type is 'photon':
+            stage_particles.append(Electron(e_n))
+            stage_particles.append(Positron(e_n))
+    return stage_particles
+
+
+particles = [Photon(e0)]
 while e0 > 1:
-    if particles[stage].type is 'electron':
-        particles.append(Electron(e0 / 2).type)
-        particles.append(Foton(e0 / 2).type)
-    elif particles[stage].type is 'positron':
-        particles.append(Foton(e0 / 2).type)
-        particles.append(Foton(e0 / 2).type)
-    elif particles[stage] is 'photon':
-        particles.append(Electron[e0 / 2].type)
-        particles.append(Positron[e0 / 2].type)
-    stage += 1
+    print(particles)
+    particles = stage(particles, e0 / 2)
     e0 /= 2
-print(particles)
