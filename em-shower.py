@@ -1,6 +1,8 @@
 from numpy import *
-from matplotlib.pyplot import plot, show
-from particle import Electron, Photon, Positron
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from particle import *
+from interactions import *
 
 
 e0 = 100  # MeV
@@ -26,34 +28,40 @@ def new_direction(direct, ang):
 def stage(parts, e_n):
     stage_particles = list()
     for part in parts:
-        new_up_dir = new_direction(part.direction, 0.1)
-        new_dn_dir = new_direction(part.direction, - 0.1)
+        ang = 1 / e0
+        new_up_dir = new_direction(part.direction, ang)
+        new_dn_dir = new_direction(part.direction, - ang)
         if part.type is 'electron':
-            stage_particles.append(Electron(e_n, new_up_dir, part.final_position))
-            stage_particles.append(Photon(e_n, new_dn_dir, part.final_position))
+            brehms = brehmstrallung(part)
+            stage_particles.append(brehms[0])
+            stage_particles.append(brehms[1])
         elif part.type is 'positron':
-            stage_particles.append(Photon(e_n, new_up_dir, part.final_position))
-            stage_particles.append(Photon(e_n, new_dn_dir, part.final_position))
+            annih = annihilation(part)
+            stage_particles.append(annih[0])
+            stage_particles.append(annih[1])
         elif part.type is 'photon':
             if part.energy > 1.022:
-                stage_particles.append(Electron(e_n, new_up_dir, part.final_position))
-                stage_particles.append(Positron(e_n, new_dn_dir, part.final_position))
+                pair = pair_production(part)
+                stage_particles.append(pair[0])
+                stage_particles.append(pair[1])
             else:
                 stage_particles.append(Electron(e_n, part.direction, part.final_position))
-    evolved_particles = list()
-    for part in stage_particles:
-        evolved_particles.append(part.evolution(mfp()))
     return stage_particles
 
 
-beam_dir = isotrope()
-particles = [Electron(e0, beam_dir, array([0, 0, 0])), Positron(e0, - beam_dir, array([0, 0, 0]))]
+e = e0
+beam_dir = array([1, 0, 0])  # isotrope()
+particles = [Electron(e, beam_dir, array([0, 0, 0]))]  #, Positron(e0, - beam_dir, array([0, 0, 0]))]
+for particle in particles:
+    particle.evolution(mfp())
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+
 while True:  # stops at 600 keV
-    print(particles)
     for particle in particles:
-        particle.evolution(mfp())
-        plot(particle.xs, particle.ys, particle.trace)
-    particles = stage(particles, e0 / 2)
-    e0 /= 2
-    if e0 / 2 < 0.511: break
-show()
+        ax.plot(particle.xs, particle.ys, particle.zs, particle.trace)
+    particles = stage(particles, e / 2)
+    e /= 2
+    if e / 2 < 0.511: break
+plt.show()
