@@ -19,12 +19,12 @@ def new_direction(direct, ang):
     return cos(ang) * direct + sin(ang) * n
 
 
-def scattering(part):
+def scattering(part):  # to define
     inter_energy = part.energy / 2
     inter_direction_pos = new_direction(part.direction, 0.01)
     inter_direction_neg = new_direction(part.direction, - 0.01)
     inter_position = part.final_position
-    return None  # to define
+    return None
 
 
 def brehmstrallung(part):
