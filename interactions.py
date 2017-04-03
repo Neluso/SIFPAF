@@ -20,11 +20,17 @@ def new_direction(direct, ang):
 
 
 def scattering(part):  # to define
-    inter_energy = part.energy / 2
-    inter_direction_pos = new_direction(part.direction, 0.01)
-    inter_direction_neg = new_direction(part.direction, - 0.01)
+    inter_energy = part.energy * 0.9
+    inter_direction = new_direction(part.direction, 0.01)
     inter_position = part.final_position
-    return None
+    if part.type is 'electron':
+        new_part = Electron(inter_energy, inter_direction, inter_position)
+        new_part.evolution(mfp())
+        return new_part
+    elif part.type is 'positron':
+        new_part = Positron(inter_energy, inter_direction, inter_position)
+        new_part.evolution(mfp())
+        return new_part
 
 
 def brehmstrallung(part):
@@ -64,3 +70,7 @@ def annihilation(part):
     photon_pos.evolution(mfp())
     photon_neg.evolution(mfp())
     return [photon_pos, photon_neg]
+
+
+def photoelectric(part):
+    return None
