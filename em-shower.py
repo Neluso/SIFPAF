@@ -3,42 +3,23 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from particle import *
 from interactions import *
+from tqdm import trange, tqdm
 
 
 e0 = 100  # MeV
 
 
-def mfp():
-    return random.exponential(1)
-
-
-# def isotrope():
-#     ep1 = random.rand()
-#     ep2 = random.rand()
-#     theta = arccos(1 - 2 * ep1)
-#     phi = 2 * pi * ep2
-#     return array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
-#
-#
-# def new_direction(direct, ang):
-#     n = cross(direct, isotrope())
-#     return cos(ang) * direct + sin(ang) * n
-
-
-def stage(parts, e_n):
+def stage(parts):
     stage_particles = list()
-    for part in parts:
+    for part in parts:  #tqdm(parts):
         epsilon = random.rand()
         if part.type is 'electron':
-            if part.energy <= 0.511:
-                stage_particles.append(scattering(part))
+            if epsilon > 0.1:
+                brehms = brehmstrallung(part)
+                stage_particles.append(brehms[0])
+                stage_particles.append(brehms[1])
             else:
-                if epsilon > 0.1:
-                    brehms = brehmstrallung(part)
-                    stage_particles.append(brehms[0])
-                    stage_particles.append(brehms[1])
-                else:
-                    stage_particles.append(scattering(part))
+                stage_particles.append(scattering(part))
         elif part.type is 'positron':
             if epsilon > 0.1:
                 annih = annihilation(part)
@@ -52,14 +33,13 @@ def stage(parts, e_n):
                 stage_particles.append(pair[0])
                 stage_particles.append(pair[1])
             else:
-                el = Electron(e_n, part.direction, part.final_position)
-                stage_particles.append(el.evolution(mfp()))
+                stage_particles.append(photoelectric(part))
     return stage_particles
 
 
-e = e0
+# Initializing simulation
 beam_dir = array([1, 0, 0])  # isotrope()
-particles = [Electron(e, beam_dir, array([0, 0, 0]))]  #, Positron(e0, - beam_dir, array([0, 0, 0]))]
+particles = [Electron(e0, beam_dir, array([0, 0, 0]))]  #, Positron(e0, - beam_dir, array([0, 0, 0]))]
 for particle in particles:
     particle.evolution(mfp())
 plot3d = plt.figure('3D Plot')
@@ -69,19 +49,44 @@ ax_plot3d = plot3d.add_subplot(111, projection='3d')
 ax_xy_lng_dev = lng_dev.add_subplot(211)
 ax_xz_lng_dev = lng_dev.add_subplot(212)
 ax_yz_plane = yz_plane.add_subplot(111)
+stage_number = 0
+multiplicity = 0
+fh = open('sim_file.txt', 'w')
 
-while True:  # stops at 600 keV
-    print(e, particles)
-    e /= 2
+
+# Simulation block
+for stage_number in trange(10):  # stops at 600 keV
+    fh.write('Stage number: ' + str(stage_number) + '\n\n')
     for particle in particles:
         ax_plot3d.plot(particle.xs, particle.ys, particle.zs, particle.trace)
         ax_xy_lng_dev.plot(particle.xs, particle.ys, particle.trace)
         ax_xz_lng_dev.plot(particle.xs, particle.zs, particle.trace)
         ax_yz_plane.plot(particle.ys, particle.zs, particle.trace)
-    particles = stage(particles, e)
-    if e < 0.511: break
+        fh.write('Particle type: ' + particle.type + '\n')
+        fh.write('Particle energy: ' + str(particle.energy) + '\n')
+        fh.write('Particle momentum: ' + str(particle.momentum) + '\n\n')
+    particles = stage(particles)
+    checker = range(len(particles))
+    for i in checker:
+        try:
+            particles.remove(None)
+        except:
+            None
+    for i in range(len(particles) - 1):
+        if particles[i].type is not 'photon':
+            if particles[i].energy <= 0.511:
+                particles[i] = particles[i + 1]
+    if particles[-1] is not 'photon':
+        if particles[-1].energy <= 0.511:
+            del particles[-1]
+    if len(particles) == multiplicity: break
+    fh.write('\nParticle number in this stage:' + str(multiplicity) + '\n\n\n\n\n')
+    multiplicity = len(particles)
+fh.close()
 
 
+# Debugging purposes
+print(particles)
 shower_axis = zeros(3)
 for particle in particles:
     shower_axis += particle.final_position
@@ -93,10 +98,13 @@ ax_yz_plane.plot((0, shower_axis[1]), (0, shower_axis[2]), 'k-')
 
 
 
+# Plotting results and images
 ax_plot3d.set_title('3D Plot')
 ax_plot3d._axis3don = False
 ax_xy_lng_dev.set_ylabel('y')
 ax_xz_lng_dev.set_ylabel('z')
 lng_dev.suptitle('Longitudinal developement')
 ax_xz_lng_dev.set_xlabel('x')
+lng_dev.savefig('long_dev.jpg')
+yz_plane.savefig('trans_plane.jpg')
 plt.show()

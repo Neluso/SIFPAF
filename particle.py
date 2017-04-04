@@ -19,13 +19,25 @@ class Electron:
         self.position = position  # 1/MeV
         self.direction = direction
         self.energy = energy  # MeV
-        self.momentum = sqrt(self.energy ** 2 - self.mass ** 2)
+        if self.energy > self.mass:
+            self.momentum = sqrt(self.energy ** 2 - self.mass ** 2) * self.direction
+            self.momentum_norm = linalg.norm(self.momentum)
+        else:
+            self.energy = self.mass
+            self.momentum = zeros(3)
+            self.momentum_norm = 0
 
     def evolution(self, mfp):
-        self.final_position = self.position + mfp * self.direction
-        self.xs = array([self.position[0], self.final_position[0]])
-        self.ys = array([self.position[1], self.final_position[1]])
-        self.zs = array([self.position[2], self.final_position[2]])
+        if linalg.norm(self.momentum) > 0:
+            self.final_position = self.position + mfp * self.direction
+            self.xs = array([self.position[0], self.final_position[0]])
+            self.ys = array([self.position[1], self.final_position[1]])
+            self.zs = array([self.position[2], self.final_position[2]])
+        else:
+            self.final_position = self.position
+            self.xs = array([self.position[0], self.final_position[0]])
+            self.ys = array([self.position[1], self.final_position[1]])
+            self.zs = array([self.position[2], self.final_position[2]])
 
 
 class Positron:
@@ -37,14 +49,25 @@ class Positron:
         self.position = position  # 1/MeV
         self.direction = direction
         self.energy = energy  # MeV
-        self.momentum = sqrt(self.energy ** 2 - self.mass ** 2)
+        if self.energy > self.mass:
+            self.momentum = sqrt(self.energy ** 2 - self.mass ** 2) * self.direction
+            self.momentum_norm = linalg.norm(self.momentum)
+        else:
+            self.energy = self.mass
+            self.momentum = zeros(3)
+            self.momentum_norm = 0
 
     def evolution(self, mfp):
-        self.final_position = self.position + mfp * self.direction
-        self.xs = array([self.position[0], self.final_position[0]])
-        self.ys = array([self.position[1], self.final_position[1]])
-        self.zs = array([self.position[2], self.final_position[2]])
-
+        if linalg.norm(self.momentum) > 0:
+            self.final_position = self.position + mfp * self.direction
+            self.xs = array([self.position[0], self.final_position[0]])
+            self.ys = array([self.position[1], self.final_position[1]])
+            self.zs = array([self.position[2], self.final_position[2]])
+        else:
+            self.final_position = self.position
+            self.xs = array([self.position[0], self.final_position[0]])
+            self.ys = array([self.position[1], self.final_position[1]])
+            self.zs = array([self.position[2], self.final_position[2]])
 
 class Photon:
     type = 'photon'
@@ -55,7 +78,8 @@ class Photon:
         self.position = position  # 1/MeV
         self.direction = direction
         self.energy = energy  # MeV
-        self.momentum = energy
+        self.momentum = energy * direction
+        self.momentum_norm = energy
 
     def evolution(self, mfp):
         self.final_position = self.position + mfp * self.direction
