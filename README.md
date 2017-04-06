@@ -13,3 +13,6 @@ SIFPAF is a 2D montecarlo particle beam simulator for the physics classroom. It 
 rigorous tool to simulate particle physics and interactions radiation-matter.
 
 If youare interested in contribute, please, contact me.
+
+
+Dependences: matplotlib, numpy, h5py, tqdm,
