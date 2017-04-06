@@ -116,10 +116,10 @@ def photoelectric(part):
 
 def stage(parts):
     stage_particles = list()
-    for part in parts:  #tqdm(parts):
+    for part in parts:  # tqdm(parts):
         if part.momentum_norm == 0:
             continue
-        epsilon = 0.5 #  random.rand()
+        epsilon = 0.5  # random.rand()
         if part.type is 'electron':
             if epsilon > 0.1:
                 brehms = brehmstrallung(part)

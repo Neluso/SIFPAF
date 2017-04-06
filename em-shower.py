@@ -7,6 +7,15 @@ from tqdm import trange, tqdm
 from h5py import File
 
 
+#########################################
+
+
+
+
+
+#########################################
+
+
 # Initializing simulation
 e0 = 100  # MeV
 beam_dir = array([1, 0, 0])  # isotrope()
