@@ -71,6 +71,7 @@ class Positron:
             self.ys = array([self.initial_position[1], self.final_position[1]])
             self.zs = array([self.initial_position[2], self.final_position[2]])
 
+
 class Photon:
     type = 'photon'
     trace = 'y--'

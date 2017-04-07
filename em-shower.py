@@ -7,19 +7,14 @@ from tqdm import trange, tqdm
 from h5py import File
 
 
-#########################################
-
-
-
-
-
-#########################################
-
-
 # Initializing simulation
-e0 = 100  # MeV
-beam_dir = array([1, 0, 0])  # isotrope()
-particles = [Electron(e0, beam_dir, array([0, 0, 0]))]  #, Positron(e0, - beam_dir, array([0, 0, 0]))]
+try:
+    e0 = float(input('Energy of the shower (in MeV): '))
+except:
+    print('Fail to read, setting default energy at 100 MeV')
+    e0 = 100  # MeV
+beam_dir = isotrope()
+particles = [Photon(e0, beam_dir, array([0, 0, 0])), Photon(e0, - beam_dir, array([0, 0, 0]))]
 for particle in particles:
     particle.evolution(mfp())
 plot3d = plt.figure('3D Plot')
@@ -74,29 +69,14 @@ while True:  # stops at 600 keV
         fh.write('Particle type: ' + particle.type + '\n')
         fh.write('Particle energy: ' + str(particle.energy) + '\n')
         fh.write('Particle momentum: ' + str(particle.momentum) + '\n\n')
-    try:
-        particles = stage(particles)
-    except:
-        print('End of simulation')
+    print('Stage', stage_number)
+    particles = stage(particles)
     if len(particles) == multiplicity: break
     fh.write('\nParticle number in this stage:' + str(multiplicity) + '\n\n\n\n\n')
-    print(multiplicity, len(particles))
+    # print(multiplicity, len(particles))
     multiplicity = len(particles)
     stage_number += 1
 fh.close()
-
-
-# Debugging purposes
-# print(particles)
-# shower_axis = zeros(3)
-# for particle in particles:
-#     shower_axis += particle.final_position
-# shower_axis /= len(particles)
-# ax_plot3d.plot((0, shower_axis[0]), (0, shower_axis[1]), (0, shower_axis[2]), 'k-')
-# ax_xy_lng_dev.plot((0, shower_axis[0]), (0, shower_axis[1]), 'k-')
-# ax_xz_lng_dev.plot((0, shower_axis[0]), (0, shower_axis[2]), 'k-')
-# ax_yz_plane.plot((0, shower_axis[1]), (0, shower_axis[2]), 'k-')
-
 
 
 # Plotting results and images
@@ -104,7 +84,7 @@ ax_plot3d.set_title('3D Plot')
 ax_plot3d._axis3don = False
 ax_xy_lng_dev.set_ylabel('y')
 ax_xz_lng_dev.set_ylabel('z')
-lng_dev.suptitle('Longitudinal developement')
+lng_dev.suptitle('Longitudinal development')
 ax_xz_lng_dev.set_xlabel('x')
 lng_dev.savefig('long_dev.jpg')
 yz_plane.savefig('trans_plane.jpg')

@@ -1,5 +1,6 @@
 from numpy import *
 from particle import *
+from tqdm import tqdm
 
 
 momentum_cut = 0.04  # MeV -> 40 keV
@@ -45,7 +46,7 @@ def scattering(part):
 
 def brehmstrallung(part):
     if part.momentum_norm < momentum_cut:
-        return None
+        return [part, None]
     inter_energy_q = part.energy * (random.rand() * 0.2 + 0.4)  # TODO: Bethe-Block -> energy loss
     inter_energy_ph = part.energy - inter_energy_q
     inter_position = part.final_position
@@ -116,8 +117,8 @@ def photoelectric(part):
 
 def stage(parts):
     stage_particles = list()
-    for part in parts:  # tqdm(parts):
-        if part.momentum_norm == 0:
+    for part in tqdm(parts):
+        if part.momentum_norm <= momentum_cut:
             continue
         epsilon = 0.5  # random.rand()
         if part.type is 'electron':
