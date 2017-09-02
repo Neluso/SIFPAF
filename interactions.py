@@ -6,16 +6,16 @@ from tqdm import tqdm
 momentum_cut = 0.04  # MeV -> 40 keV
 
 
-def mfp():
+def mfp(inter_energy):
     return random.exponential(1)
 
 
-def isotrope():
+def isotrope(origin=array([0, 0, 0])):
     ep1 = random.rand()
     ep2 = random.rand()
     theta = arccos(1 - 2 * ep1)
     phi = 2 * pi * ep2
-    return array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
+    return origin + array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
 
 
 def new_direction(direct, ang):
@@ -36,11 +36,11 @@ def scattering(part):
     inter_position = part.final_position
     if part.type is 'electron':
         new_part = Electron(inter_energy, inter_direction, inter_position)
-        new_part.evolution(mfp())
+        new_part.evolution(mfp(inter_energy))
         return new_part
     elif part.type is 'positron':
         new_part = Positron(inter_energy, inter_direction, inter_position)
-        new_part.evolution(mfp())
+        new_part.evolution(mfp(inter_energy))
         return new_part
 
 
@@ -62,8 +62,8 @@ def brehmstrallung(part):
     else:
         inter_direction_ph = zeros(3)
     new_photon = Photon(inter_energy_ph, inter_direction_ph, inter_position)
-    new_part.evolution(mfp())
-    new_photon.evolution(mfp())
+    new_part.evolution(mfp(inter_energy_q))
+    new_photon.evolution(mfp(inter_energy_ph))
     return [new_part, new_photon]
 
 
@@ -77,8 +77,8 @@ def pair_production(part):
     inter_direction_neg = part.momentum - new_positron.momentum
     inter_direction_neg /= linalg.norm(inter_direction_neg)
     new_electron = Electron(inter_energy, inter_direction_neg, inter_position)
-    new_positron.evolution(mfp())
-    new_electron.evolution(mfp())
+    new_positron.evolution(mfp(inter_energy))
+    new_electron.evolution(mfp(inter_energy))
     return [new_electron, new_positron]
 
 
@@ -96,8 +96,8 @@ def annihilation(part):
         inter_direction_neg = part.momentum - photon_pos.momentum
         inter_direction_neg /= linalg.norm(inter_direction_neg)
         photon_neg = Photon(inter_energy, inter_direction_neg, inter_position)
-    photon_pos.evolution(mfp())
-    photon_neg.evolution(mfp())
+    photon_pos.evolution(mfp(inter_energy))
+    photon_neg.evolution(mfp(inter_energy))
     return [photon_pos, photon_neg]
 
 
@@ -111,7 +111,7 @@ def photoelectric(part):
         el = Electron(0, inter_direction, inter_position)
     else:
         el = Electron(inter_energy, inter_direction, inter_position)
-    el.evolution(mfp())
+    el.evolution(mfp(inter_energy))
     return el
 
 

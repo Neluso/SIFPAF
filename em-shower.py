@@ -5,6 +5,7 @@ from particle import *
 from interactions import *
 from tqdm import trange, tqdm
 from h5py import File
+from beam_defaults import *
 
 
 # Initializing simulation
@@ -14,9 +15,11 @@ except:
     print('Fail to read, setting default energy at 100 MeV')
     e0 = 100  # MeV
 beam_dir = isotrope()
-particles = [Photon(e0, beam_dir, array([0, 0, 0])), Photon(e0, - beam_dir, array([0, 0, 0]))]
+particles = beta_emiter_spherical(100, center=array([0, 0, -2])) + \
+            beta_emiter_spherical(100, center=array([0, 0, 2])) + \
+            beta_emiter_spherical(100, center=array([0, 1, 1]), radius=2)# For default beams see "beam_defaults.py
 for particle in particles:
-    particle.evolution(mfp())
+    particle.evolution(mfp(e0))
 plot3d = plt.figure('3D Plot')
 lng_dev = plt.figure('Logitudinal developement')
 yz_plane = plt.figure('Transverse developement')
