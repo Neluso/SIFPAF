@@ -1,23 +1,10 @@
-from numpy import *
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from particle import *
-from interactions import *
-from tqdm import trange, tqdm
-from h5py import File
 from beam_defaults import *
 
 
 # Initializing simulation
-try:
-    e0 = float(input('Energy of the shower (in MeV): '))
-except:
-    print('Fail to read, setting default energy at 100 MeV')
-    e0 = 100  # MeV
-beam_dir = isotrope()
-particles = beta_emiter_spherical(100, center=array([0, 0, -2])) + \
-            beta_emiter_spherical(100, center=array([0, 0, 2])) + \
-            beta_emiter_spherical(100, center=array([0, 1, 1]), radius=2)# For default beams see "beam_defaults.py
+e0 = 100  # MeV
+beam_dir = array([1, 0, 0])
+particles = he_electron(e0, beam_dir)  # For default beams see "beam_defaults.py
 for particle in particles:
     particle.evolution(mfp(e0))
 plot3d = plt.figure('3D Plot')
@@ -30,7 +17,7 @@ ax_yz_plane = yz_plane.add_subplot(111)
 stage_number = 0
 multiplicity = 0
 fh = open('sim_file.txt', 'w')
-fh5 = File('data.h5', 'w')
+fh5 = File('data.h5', 'w', driver=None)
 
 
 # Simulation block
@@ -42,7 +29,8 @@ while True:  # stops at 600 keV
         else:
             break
     fh.write('Stage number: ' + num + '\n\n')
-    grp = fh5.create_group('Stage ' + num)
+    grp = fh5.create_group(num + 'stage')
+
     part_num = 0
     if len(particles) == 0:
         break
@@ -58,13 +46,14 @@ while True:  # stops at 600 keV
                 num = '0' + num
             else:
                 break
-        particle_data = grp.create_group(num + ' ' + particle.type)
+        particle_data = grp.create_group(num + '_' + particle.type)
         particle_data.create_dataset('energy', (1,), data=particle.energy)
         particle_data.create_dataset('momentum', particle.momentum.shape, data=particle.momentum)
         particle_data.create_dataset('initial_position', particle.initial_position.shape,
                                      data=particle.initial_position)
         particle_data.create_dataset('final_position', particle.final_position.shape,
                                      data=particle.final_position)
+        fh5.flush()
         ax_plot3d.plot(particle.xs, particle.ys, particle.zs, particle.trace)
         ax_xy_lng_dev.plot(particle.xs, particle.ys, particle.trace)
         ax_xz_lng_dev.plot(particle.xs, particle.zs, particle.trace)
