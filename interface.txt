@@ -1,0 +1,22 @@
+######################################################################
+#                                                                    #
+#                                                                    #
+#                               SIFPAF                               #
+#                                                                    #
+#      SImulador de Feixos de Partícules per a l'Aula de Física      #
+#                                                                    #
+#                                                                    #
+######################################################################
+
+Versió                0.1
+Llicència             GNU GPL V3
+Autor                 Manel Usó Izquierdo
+
+
+funcions:
+ > ajuda           mostra esta ajuda
+ > eixir           tanca SIFPAF
+ > simula          executa la simulació
+ > configura       configura la simulació
+
+

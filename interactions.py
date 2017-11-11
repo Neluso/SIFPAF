@@ -117,7 +117,7 @@ def photoelectric(part):
 
 def stage(parts):
     stage_particles = list()
-    for part in tqdm(parts):
+    for part in parts:
         if part.momentum_norm <= momentum_cut:
             continue
         epsilon = 0.5  # random.rand()
