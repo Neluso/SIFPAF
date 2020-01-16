@@ -34,11 +34,11 @@ def scattering(part):
     inter_direction = isotrope()
     inter_energy = part.energy * 0.5 * (1 + dot(part.direction, inter_direction))
     inter_position = part.final_position
-    if part.type is 'electron':
+    if part.type == 'electron':
         new_part = Electron(inter_energy, inter_direction, inter_position)
         new_part.evolution(mfp(inter_energy))
         return new_part
-    elif part.type is 'positron':
+    elif part.type == 'positron':
         new_part = Positron(inter_energy, inter_direction, inter_position)
         new_part.evolution(mfp(inter_energy))
         return new_part
@@ -51,9 +51,9 @@ def brehmstrallung(part):
     inter_energy_ph = part.energy - inter_energy_q
     inter_position = part.final_position
     inter_direction_q = new_direction(part.direction, 0.01)  # TODO: diff. cross sect. -> angular distribution
-    if part.type is 'electron':
+    if part.type == 'electron':
         new_part = Electron(inter_energy_q, inter_direction_q, inter_position)
-    elif part.type is 'positron':
+    elif part.type == 'positron':
         new_part = Positron(inter_energy_q, inter_direction_q, inter_position)
     inter_direction_ph = part.momentum - new_part.momentum
     ph_dir_norm = linalg.norm(inter_direction_ph)
@@ -121,21 +121,21 @@ def stage(parts):
         if part.momentum_norm <= momentum_cut:
             continue
         epsilon = 0.5  # random.rand()
-        if part.type is 'electron':
+        if part.type == 'electron':
             if epsilon > 0.1:
                 brehms = brehmstrallung(part)
                 stage_particles.append(brehms[0])
                 stage_particles.append(brehms[1])
             else:
                 stage_particles.append(scattering(part))
-        elif part.type is 'positron':
+        elif part.type == 'positron':
             if epsilon > 0.1:
                 annih = annihilation(part)
                 stage_particles.append(annih[0])
                 stage_particles.append(annih[1])
             else:
                 stage_particles.append(scattering(part))
-        elif part.type is 'photon':
+        elif part.type == 'photon':
             if part.energy >= 1.022:
                 pair = pair_production(part)
                 stage_particles.append(pair[0])
