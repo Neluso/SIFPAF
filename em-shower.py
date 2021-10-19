@@ -2,7 +2,7 @@ from beam_defaults import *
 
 
 # Initializing simulation
-e0 = 100  # MeV
+e0 = 10  # MeV
 beam_dir = array([1, 0, 0])
 particles = he_electron(e0, beam_dir)  # For default beams see "beam_defaults.py
 for particle in particles:
