@@ -3,10 +3,10 @@
 Autors: Neluso
 
 SIFPAF consiteix en la simulació 2D de feixos de partícules basat en tècniques montecarlo per a l'aula de física. Està 
-pensada per a ser una ferramenta divulgativa però rigorosa amb la física de partícules i la interacció de la radiació amb 
+pensada per a ser una ferramenta divulgativa, però amb l'ambició de mantindre's el més rigorosa possible amb la física de partícules i la interacció de la radiació amb 
 la matèria.
 
-Si hi vols conctribuir, posa't en contacte amb mi.
+Si hi vols contribuir, posa't en contacte amb mi.
 
 
 SIFPAF is a 2D montecarlo particle beam simulator for the physics classroom. It has been thought to be a divulgative yet
